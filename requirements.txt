@@ -1,3 +1,5 @@
-flask
-pyzk
+streamlit
 requests
+pyzk
+pandas
+flask
