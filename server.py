@@ -1,5 +1,5 @@
 from flask import Flask, request
-import zk_bridge
+import bridge
 import logging
 from datetime import datetime
 
@@ -29,5 +29,4 @@ def run_bridge():
         logging.error(f"Bridge execution failed: {e}")
         return f"Error: {e}", 500
 
-if __name__ == "__main__":
-    app.run()
+
