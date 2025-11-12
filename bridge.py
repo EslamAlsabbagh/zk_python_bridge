@@ -18,6 +18,7 @@ if st.button("Run Bridge"):
     zk = ZK(DEVICE_IP, port=PORT, timeout=10, password=COMM_KEY)
     conn = None
     try:
+        st.write("before connect")
         conn = zk.connect()
         st.success("Connected to device ✅")
         conn.disable_device()
