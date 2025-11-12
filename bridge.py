@@ -1,31 +1,29 @@
+
+import streamlit as st
 from zk import ZK
-import requests
-import json
+import requests, json
 from datetime import datetime
 
-print("ZK Bridge Script Started")
-def main():
-        # ==== CONFIG ====
+st.title("🕒 ZKTeco Attendance Bridge")
+st.write("Click below to connect to the device and upload logs to Supabase.")
+
+if st.button("Run Bridge"):
+    st.info("Connecting to device...")
     DEVICE_IP = "196.151.241.119"
     PORT = 4370
-    COMM_KEY = 0  # change if device has a comm password
+    COMM_KEY = 0
     SUPABASE_FUNCTION_URL = "https://onkzdfbifygmobauuqhe.supabase.co/functions/v1/uploadAttendance"
     SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ua3pkZmJpZnlnbW9iYXV1cWhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NTMwNzcsImV4cCI6MjA3NzMyOTA3N30.61hmVL3vo4furDssA99FrCt8ZH8djScv8KAKPXsiysM"
 
-    # =================
-
     zk = ZK(DEVICE_IP, port=PORT, timeout=10, password=COMM_KEY)
     conn = None
-    print("Script started")
-
     try:
-        print(f"Connecting to device {DEVICE_IP}...")
         conn = zk.connect()
-        print("Connected")
+        st.success("Connected to device ✅")
         conn.disable_device()
 
         attendance = conn.get_attendance()
-        print(f"Downloaded {len(attendance)} attendance records")
+        st.write(f"Downloaded **{len(attendance)}** attendance records.")
 
         logs = []
         for att in attendance:
@@ -36,6 +34,7 @@ def main():
             })
 
         if logs:
+            st.info("Uploading to Supabase...")
             res = requests.post(
                 SUPABASE_FUNCTION_URL,
                 headers={
@@ -44,17 +43,18 @@ def main():
                 },
                 data=json.dumps({"logs": logs})
             )
-            print("Supabase response:", res.status_code, res.text)
+            st.success(f"Supabase response: {res.status_code}")
+            st.text(res.text)
         else:
-            print("No new attendance logs.")
+            st.warning("No new attendance logs.")
 
         conn.enable_device()
 
     except Exception as e:
-        print("Error:", e)
-
+        st.error(f"Error: {e}")
     finally:
         if conn:
             conn.disconnect()
+
 
 
