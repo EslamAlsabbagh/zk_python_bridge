@@ -3,10 +3,11 @@ import bridge
 
 st.title("ZKTeco Bridge Control")
 
-    st.write("Bridge started...")
-    try:
-        bridge.main()
-        st.success("Bridge executed successfully!")
-    except Exception as e:
-        st.error(f"Error: {e}")
+st.write("Bridge started...")
+try:
+    bridge.main()
+    st.success("Bridge executed successfully!")
+except Exception as e:
+    st.error(f"Error: {e}")
+
 
